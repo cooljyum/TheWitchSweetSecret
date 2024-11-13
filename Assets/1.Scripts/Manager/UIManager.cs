@@ -92,7 +92,7 @@ public class UIManager : MonoBehaviour
         //*****타이머 시작 지점*****//
         _isDayActive = true;
         _remainingTime = _dayTime;
-        _posPanel.CreateNewOrder();
+        //_posPanel.CreateNewOrder();
     }
 
 

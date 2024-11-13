@@ -12,8 +12,8 @@ public class DragBlock : MonoBehaviour
 
     private float _returnTime = 0.1f;  // 블록 원래 위치 돌아갈 때 소요 시간
 
-    [SerializeField] private ItemData _itemData; //아이템 데이터
-    public ItemData ItemData // public 프로퍼티 추가
+    [SerializeField] private IngredientData _itemData; //아이템 데이터
+    public IngredientData IngredientData // public 프로퍼티 추가
     {
         get { return _itemData; }
     }
@@ -55,7 +55,7 @@ public class DragBlock : MonoBehaviour
         }
     }
 
-    public void Setup(Vector3 parentPosition, ItemData itemData)
+    public void Setup(Vector3 parentPosition, IngredientData itemData)
     {
         _parentPosition = parentPosition;
         _itemData = itemData;

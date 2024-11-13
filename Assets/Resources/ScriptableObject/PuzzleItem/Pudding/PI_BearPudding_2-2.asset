@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20d7c6206a8f7374db5e6ef45db6e8e4, type: 3}
+  m_Name: PI_BearPudding_2-2
+  m_EditorClassIdentifier: 
+  itemName: "\uACF0\uB3CC\uC774\uD478\uB529"
+  itemImage: {fileID: -9023078431559318805, guid: 5ad132ef503a5224880d4e4fb04f1f4f, type: 3}
+  itemSize: {x: 2, y: 2}
+  itemRecipe:
+  - {fileID: 11400000, guid: 409355cddd5a1254886ab74f1052b339, type: 2}
+  - {fileID: 11400000, guid: d2616ff1070e8404bb830409ee208caa, type: 2}

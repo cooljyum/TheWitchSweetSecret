@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20d7c6206a8f7374db5e6ef45db6e8e4, type: 3}
+  m_Name: PI_TombPudding_2-2
+  m_EditorClassIdentifier: 
+  itemName: "\uBB34\uB364\uD478\uB529"
+  itemImage: {fileID: 2400193420568136285, guid: b5a4687079781cd40bdd2042710d70e1, type: 3}
+  itemSize: {x: 2, y: 2}
+  itemRecipe:
+  - {fileID: 11400000, guid: f3bfcdacb8c28a440a7d4f25aba3ae6a, type: 2}
+  - {fileID: 11400000, guid: d2616ff1070e8404bb830409ee208caa, type: 2}

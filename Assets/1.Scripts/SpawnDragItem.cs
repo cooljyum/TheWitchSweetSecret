@@ -5,9 +5,9 @@ using UnityEngine.EventSystems;
 public class SpawnDragItem : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private GameObject _dropItem;
-    [SerializeField] private ItemData _itemData; // 아이템 데이터를 드래그 아이템에 전달
+    [SerializeField] private IngredientData _itemData; // 아이템 데이터를 드래그 아이템에 전달
 
-    public void Setup(ItemData itemData) 
+    public void Setup(IngredientData itemData) 
     {
         _itemData = itemData;
     }
@@ -19,7 +19,7 @@ public class SpawnDragItem : MonoBehaviour, IPointerDownHandler
     }
 
     // 드래그 가능한 아이템을 생성하는 함수
-    public void SpawnDropItem(ItemData itemData)
+    public void SpawnDropItem(IngredientData itemData)
     {
         GameObject cloneDropItem = Instantiate(_dropItem, transform.position , Quaternion.identity);
         cloneDropItem.GetComponent<DragBlock>().Setup(transform.position, itemData);

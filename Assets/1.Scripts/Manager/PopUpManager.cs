@@ -80,7 +80,7 @@ public class PopUpManager : MonoBehaviour
             statusOkButton.onClick.AddListener(() =>
             {
                 HidePopUpPanel(statusOkButton);                 // status 패널 비활성화
-                UIManager.Instance.PosPanel.CreateNewOrder();   // CreateNewOrder 호출
+                //UIManager.Instance.PosPanel.CreateNewOrder();   // CreateNewOrder 호출
             });
         }
 

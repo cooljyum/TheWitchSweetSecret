@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -7,18 +8,18 @@ using UnityEngine.UI; // UI 네임스페이스 추가
 public class Cell : MonoBehaviour
 {
     [SerializeField] private int _xIndex;
-    public int xIndex { get { return _xIndex; } }
+    public int xIndex => _xIndex;
 
     [SerializeField] private int _yIndex;
-    public int yIndex { get { return _yIndex; } }
+    public int yIndex => _yIndex;
+
+    public int Index { get; private set; }
 
     private List<DragBlock> _occupyingItems = new List<DragBlock>(); // 해당 셀을 차지하는 아이템 리스트
-
     private SpriteRenderer _cellImg; // Image 컴포넌트 추가
 
     private void Start()
     {
-        // 셀의 Image 컴포넌트를 가져옵니다.
         _cellImg = GetComponent<SpriteRenderer>();
     }
 
@@ -38,15 +39,15 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public List<ItemData> GetItemDataList() 
+    public List<IngredientData> GetItemDataList() 
     {
-        List<ItemData> itemDatas = new List<ItemData>();
+        List<IngredientData> itemDatas = new List<IngredientData>();
 
         DragBlock data = new DragBlock();
         foreach (var item in _occupyingItems)
         {
-            itemDatas.Add(item.ItemData);
-            if (item.ItemData.itemType > 0) data = item;
+            itemDatas.Add(item.IngredientData);
+            if (item.IngredientData.itemType > 0) data = item;
         }
 
         GridManager.Instance.ClearCollidingCells(data);
@@ -54,10 +55,11 @@ public class Cell : MonoBehaviour
         return itemDatas;
     }
 
-    public void Initialize(GridManager manager, int x, int y)
+    public void Initialize(GridManager manager, int x, int y, int index)
     {
         _xIndex = x;
         _yIndex = y;
+        Index = index;
     }
 
     // 셀에 아이템을 추가
@@ -80,6 +82,7 @@ public class Cell : MonoBehaviour
     {
         return _occupyingItems.Count > 0; // 리스트에 아이템이 있으면 occupied
     }
+
     // 셀의 아이템들을 파괴
     public void ClearItems(bool isCheck = false)
     {
@@ -93,6 +96,7 @@ public class Cell : MonoBehaviour
 
         ClearOccupyingItems();
     }
+
     public void ClearOccupyingItems() 
     {
         foreach (var item in _occupyingItems)
@@ -129,11 +133,7 @@ public class Cell : MonoBehaviour
     // 셀의 마지막 아이템의 orderIndex를 반환
     public int GetLastOccupyingItemOrderIndex()
     {
-        if (_occupyingItems.Count > 0)
-        {
-            return _occupyingItems[_occupyingItems.Count - 1].ItemData.orderIndex; // 마지막 아이템의 orderIndex 반환
-        }
-        return -1; // 아이템이 없으면 -1 반환 (또는 다른 기본값)
+        return _occupyingItems.Count > 0 ? _occupyingItems[^1].IngredientData.orderIndex : -1;
     }
 
     public void ChangeColor(Color color)

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20d7c6206a8f7374db5e6ef45db6e8e4, type: 3}
+  m_Name: PI_FrogGreenTeaFrappe_1-3
+  m_EditorClassIdentifier: 
+  itemName: "\uAC1C\uAD6C\uB9AC\uB179\uCC28\uD504\uB77C\uD398"
+  itemImage: {fileID: -7750400119812150969, guid: 4627686f4a13400409535d21ff414788, type: 3}
+  itemSize: {x: 1, y: 3}
+  itemRecipe:
+  - {fileID: 11400000, guid: 0f60010d39002c7418a76d4befeeb10f, type: 2}
+  - {fileID: 11400000, guid: 2993e1512bf51a948be0b7f36518833b, type: 2}
+  - {fileID: 11400000, guid: f0b25553d4a748541b1991a33867a4d6, type: 2}

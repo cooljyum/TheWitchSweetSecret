@@ -9,7 +9,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Transform _menuContent;
     [SerializeField] private GameObject _menuBtnPrefab;
     [SerializeField] private Transform _categoryContent;
-    private List<ItemData> _allItems = new List<ItemData>(); // 모든 아이템 데이터
+    private List<IngredientData> _allItems = new List<IngredientData>(); // 모든 아이템 데이터
     private Dictionary<string, Button> _menuBtns = new Dictionary<string, Button>();
     private Dictionary<string, int> _selectedFoodCount = new Dictionary<string, int>();
 
@@ -20,7 +20,7 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        // Resources의 모든 ItemData 로드
+        // Resources의 모든 IngredientData 로드
         LoadAllItems();
 
         int index = 0;
@@ -37,8 +37,8 @@ public class MenuManager : MonoBehaviour
 
     private void LoadAllItems()
     {
-        // Resources 폴더에서 ItemData 타입의 모든 오브젝트를 로드
-        ItemData[] items = Resources.LoadAll<ItemData>("ScriptableObject/Item");
+        // Resources 폴더에서 IngredientData 타입의 모든 오브젝트를 로드
+        IngredientData[] items = Resources.LoadAll<IngredientData>("ScriptableObject/Item");
 
         if (items != null && items.Length > 0)
         {
@@ -68,7 +68,7 @@ public class MenuManager : MonoBehaviour
         _menuBtns.Clear();
 
         // 선택된 카테고리의 아이템만 버튼으로 생성
-        foreach (ItemData item in _allItems)
+        foreach (IngredientData item in _allItems)
         {
             if ((int)item.itemType == category)
             {

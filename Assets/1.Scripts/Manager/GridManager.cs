@@ -11,13 +11,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2 _cellsSize = new Vector2(5, 5);     // 그리드 크기
 
     private Cell[,] _cells;                                             // 2차원 배열로 그리드 셀 관리
-    public Cell[,] cells 
-    {
-        get {return _cells;}
-    }
+    public Cell[,] cells => _cells;
 
-    // 이중 리스트로 아이템 데이터 저장
-    private List<ItemData>[] _itemDataArray;
+    private List<IngredientData>[] _itemDataArray;  // 아이템 데이터 저장
 
     private void Awake()
     {
@@ -31,6 +27,7 @@ public class GridManager : MonoBehaviour
         }
 
         InitializeGrid();
+        InitializeItemDataArray();
     }
 
     // 그리드를 초기화하는 메서드
@@ -39,13 +36,17 @@ public class GridManager : MonoBehaviour
         _cells = new Cell[(int)_cellsSize.x, (int)_cellsSize.y];          // _grid 배열 초기화
         Vector2 cellHalf = new Vector2(0.5f, 0.5f);                       // 셀 크기
         Vector2 cellOffset = new Vector2(.38f, -0.1f);
+        int index = 0;
+
         for (int y = 0; y < _cellsSize.y; ++y)
         {
             for (int x = 0; x < _cellsSize.x; ++x)
             {
                 Vector3 position = new Vector3(-_cellsSize.x * 0.5f + cellHalf.x + x + cellOffset.x,
                                                 _cellsSize.y * 0.5f + cellHalf.y - y + cellOffset.y, 0);
-                CreateCell(position, x, y);
+
+                CreateCell(position, x, y, index);
+                index++;
             }
         }
     }
@@ -53,16 +54,16 @@ public class GridManager : MonoBehaviour
     // 단일 리스트 배열 초기화
     private void InitializeItemDataArray()
     {
-        _itemDataArray = new List<ItemData>[(int)(_cellsSize.x * _cellsSize.y)]; // 셀 개수만큼 리스트 배열 초기화
+        _itemDataArray = new List<IngredientData>[(int)(_cellsSize.x * _cellsSize.y)]; // 셀 개수만큼 리스트 배열 초기화
 
         for (int i = 0; i < _itemDataArray.Length; i++)
         {
-            _itemDataArray[i] = new List<ItemData>();
+            _itemDataArray[i] = new List<IngredientData>();
         }
     }
 
     // 셀을 생성하는 메서드
-    private void CreateCell(Vector3 position, int x, int y)
+    private void CreateCell(Vector3 position, int x, int y, int index)
     {
         // 오프셋 추가
         Vector3 cellPosition = position + new Vector3(.36f, -0.26f, 0f);
@@ -72,7 +73,7 @@ public class GridManager : MonoBehaviour
 
         if (cellScript != null)
         {
-            cellScript.Initialize(this, x, y); // xIndex와 yIndex 초기화
+            cellScript.Initialize(this, x, y, index); // xIndex와 yIndex 초기화
             _cells[x, y] = cellScript;
         }
     }
@@ -305,7 +306,7 @@ public class GridManager : MonoBehaviour
 
 
 
-    public List<ItemData>[] GetCellItemData()
+    public List<IngredientData>[] GetCellItemData()
     {
         InitializeItemDataArray();
         int itemCount = 0;
@@ -321,7 +322,7 @@ public class GridManager : MonoBehaviour
                 {
                     if (itemCount < _itemDataArray.Length)
                     {
-                        _itemDataArray[itemCount].Add(item.ItemData);
+                        _itemDataArray[itemCount].Add(item.IngredientData);
                         itemCount++; 
                         ClearCollidingCells(item);
                     }
