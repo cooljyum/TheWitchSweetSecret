@@ -10,14 +10,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private HeartManager _heartManager;
-
     [SerializeField] private WitchManager _witchManager;
     [SerializeField] private CatManager _catManager;
+
+    private int _maxHeart = 5;
 
     private float _currentTime = 8f; // 시작 시간 (9시)
     private float _timeSpeed = 30f; // 2.5초당 1시간 증가
 
-    private int _maxHeart = 5;
+    [SerializeField] private PuzzleRoundData _currentRoundData;
+    public PuzzleRoundData CurrentRoundData => _currentRoundData;
 
     private void Awake()
     {
@@ -39,20 +41,22 @@ public class GameManager : MonoBehaviour
 
         // 마녀의 액션을 무작위 간격으로 실행하는 코루틴 시작
         StartCoroutine(WitchActionRoutine());
+    }
 
-        // 시간 업데이트 코루틴 시작
-        StartCoroutine(TimeUpdateRoutine());
+    private void Start()
+    {
+        _currentRoundData.roundNumber = 1;
     }
 
     // 시간을 관리하는 코루틴
-    private IEnumerator TimeUpdateRoutine()
+    public IEnumerator TimeUpdateRoutine()
     {
         while (IsGamePlay)
         {
             _currentTime += 1f; // 1시간 증가
             if (_currentTime >= 18f)
             {
-                EndGame();
+                GameOver();
                 break;
             }
 
@@ -129,20 +133,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EndGame()
+    public void GameOver()
     {
         Debug.Log("게임 끝");
         IsGamePlay = false;
-        int hearts = HeartManager.Instance.CalculateHearts();
-        Debug.Log("게임 종료. 얻은 하트: " + hearts + "개");
-
-        if (hearts >= _maxHeart) 
-        {
-            SceneManager.LoadScene("EndingScene");
-        }
-        else
-        {
-            SceneManager.LoadScene("StartScene");
-        }
     }
 }

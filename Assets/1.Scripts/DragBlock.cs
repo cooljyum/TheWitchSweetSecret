@@ -12,10 +12,10 @@ public class DragBlock : MonoBehaviour
 
     private float _returnTime = 0.1f;  // 블록 원래 위치 돌아갈 때 소요 시간
 
-    [SerializeField] private IngredientData _itemData; //아이템 데이터
+    [SerializeField] private IngredientData _ingredientData; // 아이템 데이터
     public IngredientData IngredientData // public 프로퍼티 추가
     {
-        get { return _itemData; }
+        get { return _ingredientData; }
     }
 
     private Vector2 _parentPosition;
@@ -28,14 +28,14 @@ public class DragBlock : MonoBehaviour
 
     [field: SerializeField] public Vector2Int BlockCount { private set; get; } // 블럭카운트
     private BoxCollider2D _collider;
-    private SpriteRenderer _spriteRenderer; // 스프라이트 렌더러 추가
+    private SpriteRenderer _spriteRenderer;
 
     private bool _isMouseUp = false;
 
     private void Awake()
     {
         _collider = GetComponent<BoxCollider2D>();
-        _spriteRenderer = GetComponent<SpriteRenderer>(); // 스프라이트 렌더러 초기화
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -58,15 +58,15 @@ public class DragBlock : MonoBehaviour
     public void Setup(Vector3 parentPosition, IngredientData itemData)
     {
         _parentPosition = parentPosition;
-        _itemData = itemData;
+        _ingredientData = itemData;
       
         _collider = GetComponent<BoxCollider2D>();
 
         // 아이템의 스프라이트를 설정
-        if (_spriteRenderer != null && _itemData != null)
+        if (_spriteRenderer != null && _ingredientData != null)
         {
-            _spriteRenderer.sprite = _itemData.itemImage; // 아이템 이미지로 설정
-            _spriteRenderer.sortingOrder = _itemData.orderIndex + 3; // 인덱스를 기반으로 정렬 순서 설정
+            _spriteRenderer.sprite = _ingredientData.itemImage; // 아이템 이미지로 설정
+            _spriteRenderer.sortingOrder = _ingredientData.orderIndex + 3; // 인덱스를 기반으로 정렬 순서 설정
         }
     }
 
@@ -85,9 +85,9 @@ public class DragBlock : MonoBehaviour
         mousePos.z = Camera.main.WorldToScreenPoint(transform.position).z;
         transform.position = Camera.main.ScreenToWorldPoint(mousePos);
 
-        bool isPackagingItem = _itemData.itemType == 0;
+        bool isPackagingItem = _ingredientData.itemType == 0;
 
-        _selectedCells = GridManager.Instance.CheckCellOverlap(_collider, _itemData.itemSize.x, _itemData.itemSize.y, _itemData.orderIndex); // 업데이트된 리스트를 반환받음
+        _selectedCells = GridManager.Instance.CheckCellOverlap(_collider, _ingredientData.itemSize.x, _ingredientData.itemSize.y, _ingredientData.orderIndex); // 업데이트된 리스트를 반환받음
     }
 
     private void MouseUp()
@@ -95,7 +95,7 @@ public class DragBlock : MonoBehaviour
         UIManager.Instance.SetScrollEnabled(true);
 
         // 아이템이 차지할 셀 수 계산
-        int requiredCells = _itemData.itemSize.x * _itemData.itemSize.y;
+        int requiredCells = _ingredientData.itemSize.x * _ingredientData.itemSize.y;
 
         // 선택된 셀이 필요한 셀 수보다 적으면 원래 위치로 복귀
         if (_selectedCells.Count < requiredCells)

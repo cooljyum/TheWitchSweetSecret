@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PopUpManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _startPanel;
-    [SerializeField] private GameObject _statusPanel;
-    [SerializeField] private GameObject _endPanel;
+    [SerializeField] private GameObject _startPanel;    // 게임 시작창
+    [SerializeField] private GameObject _statusPanel;   // 성공/실패창
+    [SerializeField] private GameObject _gameOverPanel; // 게임오버창
 
     private void Start()
     {
@@ -16,13 +17,14 @@ public class PopUpManager : MonoBehaviour
         AssignOkButtonEvents();
     }
 
-    // daystart 패널 활성화 //
-    public void ShowDayStartPanel(int currentDay)
+    // gamestart 패널 활성화 //
+    public void ShowGameStartPanel(int currentDay)
     {
         _startPanel.SetActive(true);
 
         TextMeshProUGUI dayText = _startPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        dayText.text = $"Day{UIManager.Instance.CurrentDayNumber}";
+        dayText.text = $"ROUND {(UIManager.Instance.PosPanel.CurrentRound)+1}";
+        SoundManager.Instance.PlayFX("GameStart");
     }
 
     // orderstatus 패널 활성화 //
@@ -32,15 +34,15 @@ public class PopUpManager : MonoBehaviour
 
         TextMeshProUGUI statusText = _statusPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         statusText.text = orderStatus ? "주문 처리 성공" : "주문 처리 실패";
+        string fxFileName = orderStatus ? "PackageSuccess" : "PackageFail";
+        SoundManager.Instance.PlayFX(fxFileName);
     }
 
-    // dayend 패널 활성화 //
-    public void ShowDayEndPanel()
+    // gameover 패널 활성화 //
+    public void ShowGameOverPanel()
     {
-        _endPanel.SetActive(true);
-
-        TextMeshProUGUI resultText = _endPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        resultText.text = $"성공한 주문 {UIManager.Instance.SuccessCount}\n실패한 주문 {UIManager.Instance.FailureCount}\n오늘의 별점 {UIManager.Instance.StagePanel.StarPointByStage[UIManager.Instance.CurrentDayNumber]}";
+        _gameOverPanel.SetActive(true);
+        SoundManager.Instance.PlayFX("PackageFail");
     }
 
     // 패널 모두 비활성화 //
@@ -48,7 +50,7 @@ public class PopUpManager : MonoBehaviour
     {
         _startPanel.SetActive(false);
         _statusPanel.SetActive(false);
-        _endPanel.SetActive(false);
+        _gameOverPanel.SetActive(false);
     }
 
     // 확인 버튼 클릭 시 부모 패널 비활성화 //
@@ -69,8 +71,8 @@ public class PopUpManager : MonoBehaviour
         {
             startOkButton.onClick.AddListener(() =>
             {
-                HidePopUpPanel(startOkButton);            // start 패널 비활성화
-                UIManager.Instance.StartDayTime();        // StartDayTime 호출
+                HidePopUpPanel(startOkButton);                            // start 패널 비활성화
+                StartCoroutine(GameManager.Instance.TimeUpdateRoutine()); // TimeUpdateRoutine 시작
             });
         }
 
@@ -79,23 +81,22 @@ public class PopUpManager : MonoBehaviour
         {
             statusOkButton.onClick.AddListener(() =>
             {
-                HidePopUpPanel(statusOkButton);                 // status 패널 비활성화
-                //UIManager.Instance.PosPanel.CreateNewOrder();   // CreateNewOrder 호출
+                HidePopUpPanel(statusOkButton);      // status 패널 비활성화
             });
         }
 
-        Button endOkButton = _endPanel.GetComponentInChildren<Button>();
-        if (endOkButton != null)
+        Button gameOverOKButton = _gameOverPanel.GetComponentInChildren<Button>();
+        if (gameOverOKButton != null)
         {
-            endOkButton.onClick.AddListener(() =>
+            gameOverOKButton.onClick.AddListener(() =>
             {
-                HidePopUpPanel(endOkButton);               // end 패널 비활성화
-                UIManager.Instance.PrepareForNextDay();    // PrepareForNextDay 호출
+                HidePopUpPanel(gameOverOKButton);               // gameover 패널 비활성화
+                SceneManager.LoadScene("StartScene");
             });
         }
     }
 
-    public bool IsDayStartPanelActive()
+    public bool IsGameStartPanelActive()
     {
         return _startPanel.activeSelf;
     }
@@ -107,6 +108,6 @@ public class PopUpManager : MonoBehaviour
 
     public bool IsDayEndPanelActive()
     {
-        return _endPanel.activeSelf;
+        return _gameOverPanel.activeSelf;
     }
 }

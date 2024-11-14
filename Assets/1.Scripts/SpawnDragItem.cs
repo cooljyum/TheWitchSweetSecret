@@ -5,17 +5,17 @@ using UnityEngine.EventSystems;
 public class SpawnDragItem : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private GameObject _dropItem;
-    [SerializeField] private IngredientData _itemData; // 아이템 데이터를 드래그 아이템에 전달
+    [SerializeField] private IngredientData _puzzleItemData; // 아이템 데이터를 드래그 아이템에 전달
 
     public void Setup(IngredientData itemData) 
     {
-        _itemData = itemData;
+        _puzzleItemData = itemData;
     }
 
     // 마우스를 눌렀을 때 호출되는 함수
     public void OnPointerDown(PointerEventData eventData)
     {
-        SpawnDropItem(_itemData);
+        SpawnDropItem(_puzzleItemData);
     }
 
     // 드래그 가능한 아이템을 생성하는 함수

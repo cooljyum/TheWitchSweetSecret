@@ -17,6 +17,7 @@ public class ItemRequirementsGroup
 [CreateAssetMenu(fileName = "New Puzzle Round", menuName = "Order System/Puzzle Round Data")]
 public class PuzzleRoundData : ScriptableObject
 {
-    public List<int> activeSlotIndices;                    // 활성화된 칸 인덱스 (0~24)
+    public int roundNumber;                                // 라운드 수
+    public List<int> activeCellIndices;                   // 활성화된 칸 인덱스 (0~24)
     public List<ItemRequirementsGroup> requirementsGroups; // 여러 개의 아이템 요구 사항 그룹
 }

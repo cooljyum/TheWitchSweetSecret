@@ -5,15 +5,15 @@ using static UnityEditor.Progress;
 
 public class GridManager : MonoBehaviour
 {
-    public static GridManager Instance { get; private set; }            // 싱글톤 인스턴스
+    public static GridManager Instance { get; private set; }
 
-    [SerializeField] private GameObject _cellPrefab;                    // Cell 프리팹
-    [SerializeField] private Vector2 _cellsSize = new Vector2(5, 5);     // 그리드 크기
+    public GameObject _cellPrefab;                   // 셀 프리팹
+    public Transform _gridParent;                    // 그리드 부모 오브젝트
+    public int _gridSize = 5;                        // 그리드 크기 (예: 5x5)
+    //public List<int> _activeCellIndices;             // 활성화할 셀 인덱스
 
-    private Cell[,] _cells;                                             // 2차원 배열로 그리드 셀 관리
-    public Cell[,] cells => _cells;
-
-    private List<IngredientData>[] _itemDataArray;  // 아이템 데이터 저장
+    private List<Cell> _cells = new List<Cell>();
+    private List<PuzzleItemData>[] _itemDataArray;  // 아이템 데이터 저장
 
     private void Awake()
     {
@@ -25,28 +25,71 @@ public class GridManager : MonoBehaviour
         {
             Destroy(gameObject); // 이미 인스턴스가 존재하면 현재 객체 파괴
         }
+    }
 
+    private void Start()
+    {
         InitializeGrid();
         InitializeItemDataArray();
     }
 
-    // 그리드를 초기화하는 메서드
-    private void InitializeGrid()
+    // 초기화 시 그리드 생성 및 활성화
+    public void InitializeGrid()
     {
-        _cells = new Cell[(int)_cellsSize.x, (int)_cellsSize.y];          // _grid 배열 초기화
-        Vector2 cellHalf = new Vector2(0.5f, 0.5f);                       // 셀 크기
-        Vector2 cellOffset = new Vector2(.38f, -0.1f);
-        int index = 0;
+        ClearGrid();
 
-        for (int y = 0; y < _cellsSize.y; ++y)
+        for (int i = 0; i < _gridSize * _gridSize; i++)
         {
-            for (int x = 0; x < _cellsSize.x; ++x)
-            {
-                Vector3 position = new Vector3(-_cellsSize.x * 0.5f + cellHalf.x + x + cellOffset.x,
-                                                _cellsSize.y * 0.5f + cellHalf.y - y + cellOffset.y, 0);
+            GameObject newCellObj = Instantiate(_cellPrefab, _gridParent);
+            Cell newCell = newCellObj.GetComponent<Cell>();
+            newCell.Initialize(this, i % _gridSize, i / _gridSize, i);
 
-                CreateCell(position, x, y, index);
-                index++;
+            // _activeCellIndices에 포함된 인덱스만 활성화
+            if (_activeCellIndices.Contains(i))
+            {
+                newCellObj.SetActive(true);
+                newCell.ChangeColor(Color.green); // 예: 활성화된 셀을 초록색으로 표시
+            }
+            else
+            {
+                newCellObj.SetActive(false);
+            }
+
+            _cells.Add(newCell);
+        }
+
+        ArrangeGrid();
+    }
+
+    // 그리드 정리
+    private void ClearGrid()
+    {
+        foreach (var cell in _cells)
+        {
+            Destroy(cell.gameObject);
+        }
+        _cells.Clear();
+    }
+
+    // 그리드 배열 설정
+    private void ArrangeGrid()
+    {
+        for (int i = 0; i < _cells.Count; i++)
+        {
+            int x = i % _gridSize;
+            int y = i / _gridSize;
+            _cells[i].transform.localPosition = new Vector3(x, y, 0);
+        }
+    }
+
+    // 셀의 아이템들을 제거
+    public void ClearCollidingCells(DragBlock data)
+    {
+        foreach (Cell cell in data.SelectedCells)
+        {
+            if (cell.IsOccupied())
+            {
+                cell.ClearOccupyingItems();
             }
         }
     }
@@ -54,27 +97,11 @@ public class GridManager : MonoBehaviour
     // 단일 리스트 배열 초기화
     private void InitializeItemDataArray()
     {
-        _itemDataArray = new List<IngredientData>[(int)(_cellsSize.x * _cellsSize.y)]; // 셀 개수만큼 리스트 배열 초기화
+        _itemDataArray = new List<PuzzleItemData>[_gridSize * _gridSize]; // 셀 개수만큼 리스트 배열 초기화
 
         for (int i = 0; i < _itemDataArray.Length; i++)
         {
-            _itemDataArray[i] = new List<IngredientData>();
-        }
-    }
-
-    // 셀을 생성하는 메서드
-    private void CreateCell(Vector3 position, int x, int y, int index)
-    {
-        // 오프셋 추가
-        Vector3 cellPosition = position + new Vector3(.36f, -0.26f, 0f);
-
-        GameObject clone = Instantiate(_cellPrefab, cellPosition, Quaternion.identity, transform);
-        Cell cellScript = clone.GetComponent<Cell>();
-
-        if (cellScript != null)
-        {
-            cellScript.Initialize(this, x, y, index); // xIndex와 yIndex 초기화
-            _cells[x, y] = cellScript;
+            _itemDataArray[i] = new List<PuzzleItemData>();
         }
     }
 
@@ -82,7 +109,6 @@ public class GridManager : MonoBehaviour
     {
         ClearAllItems(); // 실제 아이템을 제거하는 메서드를 호출
     }
-
 
     // 모든 셀의 아이템을 제거하는 메서드
     public void ClearAllItems()
@@ -95,22 +121,6 @@ public class GridManager : MonoBehaviour
             }
         }
         Debug.Log("모든 셀의 아이템이 제거되었습니다.");
-    }
-
-
-
-    public void ClearCollidingCells(DragBlock targetItem)
-    {
-        foreach (Cell cell in _cells) // 모든 셀을 순회
-        {
-            if (!cell.IsOccupied()) continue;
-            
-            if (cell.GetOccupyingItems().Contains(targetItem)) // 특정 아이템과 충돌하는 셀이면
-            {
-                cell.ClearItems(true); // 해당 셀의 아이템 제거
-                cell.UpdateCellColor();
-            }
-        }
     }
 
     // 선택된 셀들의 중심 위치를 계산하는 메서드
@@ -303,10 +313,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-
-
-
-    public List<IngredientData>[] GetCellItemData()
+    public List<PuzzleItemData>[] GetCellItemData()
     {
         InitializeItemDataArray();
         int itemCount = 0;
@@ -332,5 +339,4 @@ public class GridManager : MonoBehaviour
 
         return _itemDataArray;
     }
-
 }
